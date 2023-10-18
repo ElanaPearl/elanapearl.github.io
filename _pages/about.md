@@ -17,10 +17,10 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-tl;dr: interested in cancer :dna: immunology :petri_dish: machine learning :computer: and patient advocacy :green_heart: also rock climbing :climbing_woman: mountaineering :mountain_snow: aerial silks :circus_tent: and basically anything near mountains
+tl;dr: interested in cancer :dna: immunology :petri_dish: machine learning :computer: and patient advocacy :green_heart: also rock climbing :climbing_woman: mountaineering :mountain_snow: aerial silks :circus_tent: and basically anything in the mountains
 
 #### Science
-I'm in the second year of my PhD at Stanford University, advised by [James Zou](https://www.james-zou.com). I'm currently working on improving computational tools to predict which cancer mutations will be presented to the immune system and available for targeting with immunotherapies. I'm also working on models to predict the set of antigens a T cell can bind to, to help identify what drives T cells to attack non-foreign cells in autoimmune diseases and T cell therapy off-target attacks. Previously I've work on cancer bioinformatics, protein language models, and computational small molecule drug design.
+I'm in the second year of my PhD at Stanford University, advised by [James Zou](https://www.james-zou.com). I'm currently working on improving computational tools to predict which cancer mutations will be presented to the immune system and available for targeting with immunotherapies. I'm also working on models to predict the set of antigens a T cell can bind to, to help identify what drives T cells to attack non-foreign cells in autoimmune diseases and T cell therapy off-target toxicity. Previously I've work on cancer bioinformatics, protein language models, and computational small molecule drug design.
 
 
 #### Advocacy
