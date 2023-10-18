@@ -1,12 +1,6 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - ElanaPearl
 
 github_repos:
-  - alshedivat/al-folio
-  - twbs/bootstrap
-  - jekyll/jekyll
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - jpswalsh/academicons
-  - mathjax/MathJax
+  - seyonechithrananda/bert-loves-chemistry
+  - ElanaPearl/mapping-chemical-space-with-umap.ipynb
