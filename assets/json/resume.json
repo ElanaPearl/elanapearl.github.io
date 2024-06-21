@@ -1,0 +1,150 @@
+{
+    "education": [
+      {
+        "institution": "Stanford University",
+        "area": "Biomedical Informatics",
+        "studyType": "PhD",
+        "startDate": "2022",
+        "endDate": "",
+        "score": "",
+        "courses": []
+      },
+      {
+        "institution": "Harvard University",
+        "area": "Computer Science",
+        "studyType": "Undergraduate",
+        "startDate": "2014",
+        "endDate": "2018",
+        "score": "",
+        "courses": []
+      }
+    ],
+    "work": [
+      {
+        "name": "Reverie Labs",
+        "position": "Senior Machine Learning Engineer",
+        "url": "",
+        "startDate": "2018",
+        "endDate": "2022",
+        "summary": "",
+        "highlights": []
+      },
+      {
+        "name": "Google Research",
+        "position": "Research Intern, Google Accelerated Science",
+        "url": "",
+        "startDate": "2016",
+        "endDate": "2016",
+        "summary": "",
+        "highlights": []
+      },
+      {
+        "name": "Harvard University",
+        "position": "Computer Science Teaching Fellow",
+        "url": "",
+        "startDate": "2016",
+        "endDate": "2018",
+        "summary": "",
+        "highlights": [
+          "CS 181: Introduction to Machine Learning",
+          "CS 51: Abstraction and Design in Computation",
+          "CSCI P-14200: Introduction to Programming"
+        ]
+      },
+      {
+        "name": "Facebook",
+        "position": "Software Engineering Intern, FBU",
+        "url": "",
+        "startDate": "2015",
+        "endDate": "2015",
+        "summary": "",
+        "highlights": []
+      }
+    ],
+    "awards": [
+      {
+        "title": "",
+        "date": "2024",
+        "awarder": "",
+        "summary": "Received NSF Graduate Research Fellowship"
+      },
+      {
+        "title": "",
+        "date": "2019",
+        "awarder": "",
+        "summary": "Gave talk at Adolescent and Young Adult Cancer Symposium"
+      },
+      {
+        "title": "",
+        "date": "2017",
+        "awarder": "",
+        "summary": "Joined President Obama on podium for signing of 21st Century Cures Act"
+      },
+      {
+        "title": "",
+        "date": "2017",
+        "awarder": "",
+        "summary": "Harvard College Research Program Fellow"
+      },
+      {
+        "title": "",
+        "date": "2017",
+        "awarder": "",
+        "summary": "Interact Fellow"
+      },
+      {
+        "title": "",
+        "date": "2016",
+        "awarder": "",
+        "summary": "Introduced Vice President Biden at the international launch of Cancer Moonshot at the Vatican"
+      },
+      {
+        "title": "",
+        "date": "2016",
+        "awarder": "",
+        "summary": "Spoke in White House panel on diversity in STEM"
+      },
+      {
+        "title": "",
+        "date": "2016",
+        "awarder": "",
+        "summary": "Honoraree attendee at White House Science Fair"
+      },
+      {
+        "title": "",
+        "date": "2015",
+        "awarder": "",
+        "summary": "Top Ten Clinical Research Achievement Award from Clinical Research Forum"
+      },
+      {
+        "title": "",
+        "date": "2015",
+        "awarder": "",
+        "summary": "Introduced President Obama at the announcement of the Precision Medicine Initiative"
+      },
+      {
+        "title": "",
+        "date": "2014",
+        "awarder": "",
+        "summary": "American Association for Young Champion in Cancer Research"
+      },
+      {
+        "title": "",
+        "date": "2014",
+        "awarder": "",
+        "summary": "Gave plenary talk at the 2014 Annual Meeting of the American Association for Cancer Research"
+      },
+      {
+        "title": "",
+        "date": "2014",
+        "awarder": "",
+        "summary": "Presented research to President Obama at the White House Science Fair"
+      },
+      {
+        "title": "",
+        "date": "2014",
+        "awarder": "",
+        "summary": "Davidson Fellow"
+      }
+    ]
+  }
