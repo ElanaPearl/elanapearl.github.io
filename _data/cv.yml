@@ -1,97 +1,60 @@
-- title: General Information
-  type: map
-  contents:
-    - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
-    - name: Languages
-      value: English, German
-
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
-      description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
-      description:
-        - Description 1.
-        - Description 2.
+    - title: PhD, Biomedical Informatics
+      institution: Stanford University
+      year: 2022-present
+    - title: Undergraduate, Computer Science
+      institution: Harvard University
+      year: 2014-2018
 
 - title: Experience
   type: time_table
   contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
-      description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
-      description:
-        - Description 1.
-        - Description 2.
+    - title: Senior Machine Learning Engineer
+      institution: Reverie Labs (Cambridge, MA)
+      year: 2018-2022
+    - title: Research Intern, Google Accelerated Science
+      institution: Google Research (Mountain View, CA)
+      year: 2016
+    - title: Computer Science Teaching Fellow
+      institution: Harvard University (Cambridge, MA)
+      year: 2016-2018
+      items:
+        - "CS 181: Introduction to Machine Learning"
+        - "CS 51: Abstraction and Design in Computation"
+        - "CSCI P-14200: Introduction to Programming"
+    - title: Software Engineering Intern, FBU
+      institution: Facebook (Menlo Park, CA)
+      year: 2015
 
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
-      description:
-
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
-
-- title: Open Source Projects
-  type: time_table
-  contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
 
 - title: Honors and Awards
   type: time_table
   contents:
-    - year: 1921
+    - year: 2024
       items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
+        - Received NSF Graduate Research Fellowship
+    - year: 2019
       items:
-        - Max Planck Medal
-
-- title: Academic Interests
-  type: nested_list
-  contents:
-    - title: Topic 1.
+        - Gave talk at Adolescent and Young Adult Cancer Symposium
+    - year: 2017
       items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
+        - Joined President Obama on podium for signing of 21st Century Cures Act
+        - Harvard College Research Program Fellow
+        - Interact Fellow
+    - year: 2016
       items:
-        - Description 1.
-        - Description 2.
-
-- title: Other Interests
-  type: list
-  contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+        - Introduced Vice President Biden at the international launch of Cancer Moonshot at the Vatican
+        - Spoke in White House panel on diversity in STEM
+        - Honoraree attendee at White House Science Fair
+    - year: 2015
+      items:
+        - Top Ten Clinical Research Achievement Award from Clinical Research Forum
+        - Introduced President Obama at the announcement of the Precision Medicine Initiative
+    - year: 2014
+      items:
+        - American Association for Young Champion in Cancer Research
+        - Gave plenary talk at the 2014 Annual Meeting of the American Association for Cancer Research
+        - Presented research to President Obama at the White House Science Fair
+        - Davidson Fellow
