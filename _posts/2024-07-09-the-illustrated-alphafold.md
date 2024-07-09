@@ -61,7 +61,7 @@ Throughout the model a protein complex is represented in two primary forms: the 
 
 * The diagrams abstract away the model weights and only visualize how the shapes of activations change
 * The activation tensors are always labeled with the dimension names used in the paper and the sizes of the diagrams vaguely aim to follow when these dimensions grow/shrink.  <d-footnote>The hidden dimension names usually start with "c" for "channel". For reference the main dimensions used are c<sub>z</sub>=128, c<sub>m</sub>=64, c<sub>atom</sub>=128, c<sub>atompair</sub>=16, c<sub>token</sub>=768, c<sub>s</sub>=384.</d-footnote>
-* Whenever possible, the names above the tensors in this (and every) diagram match the names of the tensors use in the AF3 supplement. Typically a tensor maintains its name as it goes through the model, but we keep original version of the tensor created and it gets its own name to differentiate it from the version that gets updated by the model (_e.g._ **<span style="color: #A056A7;">c</span>** is the original version of **<span style="color: #A056A7;">q</span>** and they get maintain separate names so that they can both be used together).
+* Whenever possible, the names above the tensors in this (and every) diagram match the names of the tensors use in the AF3 supplement. Typically, a tensor maintains its name as it goes through the model. However, in some cases, we use different names to distinguish between versions of a tensor at different stages of processing. For example, in the atom-level single representation, **<span style="color: #A056A7;">c</span>** represents the initial atom-level single representation while **<span style="color: #A056A7;">q</span>** represents the updated version of this representation as it progresses through the Atom Transformer.
 * We also ignore most of the LayerNorms for simplicity but they are used _everywhere_.
 
 ---
@@ -70,8 +70,14 @@ Throughout the model a protein complex is represented in two primary forms: the 
   {% include figure.liquid path="assets/img/af3_post/input_prep.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
-The actual input a user provides to AF3 is the sequence of one protein and optionally additional molecules. The goal of this section is to convert these sequences into a series of 6 tensors that will be used as the input to the main trunk of the model as outlined in this diagram. These tensors are **<span style="color: #F5ACFB;">s</span>**, our token-level single representation, **<span style="color: #7CC9F4;">z</span>**, our token-level pair representation, **<span style="color: #A056A7;">q</span>**, our atom-level single representation, **<span style="color: #087CBE;">p</span>**, our atom-level pair representation, **<span style="color: #FDC38D;">m</span>**, our MSA representation, and **<span style="color: #2EAF88;">t</span>**, our template representation. We now describe the difference between these atom-level and token-level representations.
+The actual input a user provides to AF3 is the sequence of one protein and optionally additional molecules. The goal of this section is to convert these sequences into a series of 6 tensors that will be used as the input to the main trunk of the model as outlined in this diagram. These tensors are **<span style="color: #F5ACFB;">s</span>**, our token-level single representation, **<span style="color: #7CC9F4;">z</span>**, our token-level pair representation, **<span style="color: #A056A7;">q</span>**, our atom-level single representation, **<span style="color: #087CBE;">p</span>**, our atom-level pair representation, **<span style="color: #FDC38D;">m</span>**, our MSA representation, and **<span style="color: #2EAF88;">t</span>**, our template representation.
 
+This section contains:
+* [**Tokenization**](#tokenization) describes how molecules are tokenized and clarifyies the difference between atom-level and token-level
+* [**Retrieval (Create MSA and Templates)**](#retrieval-create-msa-and-templates) expalains why and how we include additional inputs to the model. It creates our MSA (**<span style="color: #FDC38D;">m</span>**) and structure templates (**<span style="color: #2EAF88;">t</span>**).
+* [**Create Atom-Level Representations**](#create-atom-level-representations) creates our first atom-level representations **<span style="color: #A056A7;">q</span>** (single) and **<span style="color: #087CBE;">p</span>** (pair) and includes information about generated conformers of the molecules.
+* [**Update Atom-Level Representations (Atom Transformer)**](#update-atom-level-representations-atom-transformer) is the main "Input Embedder" block, also called the "Atom Transformer", which gets repreated 3 times and updates the atom-level single representation (**<span style="color: #A056A7;">q</span>**). The building blocks introduced here ([**Adaptive LayerNorm**](#1-adaptive-layernorm), [**Attention with Pair Bias**](#2-attention-with-pair-bias), [**Conditioned Gating**](#3-conditioned-gating), and [**Conditioned Transition**](#4-conditioned-transition)) are also relevant later in the model.
+* [**Aggregate Atom-Level -> Token-Level**](#aggregate-atom-level--token-level) takes our atom-level representations (**<span style="color: #A056A7;">q</span>**, **<span style="color: #087CBE;">p</span>**) and aggregates all the atoms that at part of multi-atom tokens to create token-level representations **<span style="color: #F5ACFB;">s</span>** (single) and **<span style="color: #7CC9F4;">z</span>** (pair) and includes information from the MSA (**<span style="color: #FDC38D;">m</span>**) and any user-provided information about known bonds that involve ligands.
 
 ## Tokenization
 <div class="l-gutter">
@@ -163,7 +169,7 @@ Having generated **<span style="color: #A056A7;">q</span>** (representation of a
 
 The Atom Transformer mostly follows a standard transformer structure using layer norm, attention, then an MLP transition. However, each step has been adapted to include additional input from **<span style="color: #A056A7;">c</span>** and **<span style="color: #087CBE;">p</span>** (including a secondary input here is sometimes referred to as "conditioning".) There is also a 'gating' step between the attention and MLP blocks. Going through each of these 4 steps in more detail:
 
-**1. Adaptive LayerNorm**
+### 1. Adaptive LayerNorm
 <div class="l-body">
   <div class="row">
     <div class="col-sm mt-2 mt-md-0">
@@ -178,8 +184,7 @@ The Atom Transformer mostly follows a standard transformer structure using layer
 
 Adaptive LayerNorm (AdaNorm) is a variant of LayerNorm with one simple extension. Recall that for a given input matrix, traditional LayerNorm learns two parameters (a scaling factor gamma and a bias factor beta) that adjust the mean and standard deviation of each of the channels in our matrix. Instead of learning fixed parameters for gamma and beta, AdaNorm learns a function to generate gamma and beta adaptively based on the input matrix. However, instead of generating the parameters based on the input getting re-scaled (in the Atom Transformer this is **<span style="color: #A056A7;">q</span>**), a secondary input (**<span style="color: #A056A7;">c</span>** in the Atom Transformer) is used to predict the gamma and beta that re-scale the mean and standard deviation of **<span style="color: #A056A7;">q</span>**.
 
-**2. Attention with Pair Bias**
-
+### 2. Attention with Pair Bias
 <div class="l-body">
   {% include figure.liquid path="assets/img/af3_post/atom_attn_w_pair_bias.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
@@ -190,20 +195,27 @@ Atom-Level Attention with Pair-Bias can be thought of as an extension of self-at
 
 2. **Gating**: In addition to the queries, keys, and values, we create an additional projection of **<span style="color: #A056A7;">q</span>** that is passed through a sigmoid, to squash the values between 0 and 1. Our output is multiplied by this "gate" right before all the heads are re-combined. This effectively forces the model to ignore some of what it learned in this attention process. This type of gating appears frequently in AF3 and is discussed more in the ML-musings section. To briefly elaborate, because the model is constantly adding the outputs of each section to the residual stream, this gating mechanism can be thought of as the model's way to specify what information does or does not get saved in this residual stream. It is presumably named a "gate" after the similar "gates" in LSTM which uses a sigmoid to learn a filter for what inputs get added to the running cell state.
 
-3. **Sparse attention**: Because the number of atoms can be much larger than the number of tokens, we do not run full attention at this step, rather, we use a type of sparse attention (called Sequence-local atom attention) in which the attention is effectively run in local groups where groups of 32 atoms at a time can all attend to 128 other atoms. Sparse attention patterns are more thoroughly described [elsewhere on the internet](https://medium.com/@vishal09vns/sparse-attention-dad17691478c).
-<div class="l-gutter">
-  {% include figure.liquid path="assets/img/af3_post/sparse_attn_pattern.png" class="img-fluid rounded z-depth-1" zoomable=true %}
-</div>
+3. **Sparse attention**:
+<table style="border-collapse: collapse; border: none;">
+<tr>
+<td width="77%" style="border: none;">
+Because the number of atoms can be much larger than the number of tokens, we do not run full attention at this step, rather, we use a type of sparse attention (called Sequence-local atom attention) in which the attention is effectively run in local groups where groups of 32 atoms at a time can all attend to 128 other atoms. Sparse attention patterns are more thoroughly described <a href="https://medium.com/@vishal09vns/sparse-attention-dad17691478">elsewhere on the internet</a>.
+</td>
+<td width="25%" style="border: none;">
+{% include figure.liquid path="assets/img/af3_post/sparse_attn_pattern.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+</td>
+</tr>
+</table>
 
-**3. Conditioned Gating**
 
+### 3. Conditioned Gating
 <div class="l-body">
   {% include figure.liquid path="assets/img/af3_post/conditioned_gating.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 We apply another gate to our data, but this time the gate is generated from our origin atom-level single matrix, **<span style="color: #A056A7;">c</span>**<d-footnote>As with so many steps, it is unclear why it is done this way and what the benefit of conditioning on the original representation <b><span style="color: #A056A7;">c</span></b> does as opposed to learning the gate from the primary single representation <b><span style="color: #A056A7;">q</span></b></d-footnote>.
 
-**4. Conditioned Transition**
+### 4. Conditioned Transition
 
 This step is equivalent to the MLP layers in a transformer, and is called "conditioned" because the MLP is sandwiched in between Adaptive LayerNorm (Step 1 of Atom Transformer) and Conditional Gating (Step 3 of Atom Transformer) which both depend on **<span style="color: #A056A7;">c</span>**.
 
@@ -249,16 +261,19 @@ For Step 2, we will set aside the atom-level representations (**<span style="col
   {% include figure.liquid path="assets/img/af3_post/rep_learning_arch.jpg" class="img-fluid rounded z-depth-1" zoomable=true %}
   <div class="caption">(Diagram modified from full AF3 architecture diagram)</div>
 </div>
-This section is the majority of the model, often referred to as the "trunk", as it is where most of the computation is done. We call it the representation learning section of the model, as the goal is to learn improved representations of our "single sequence" (**<span style="color: #F5ACFB;">s</span>**) and "pair" (**<span style="color: #7CC9F4;">z</span>**) tensors initialized above. <d-footnote>
-Recall that we refer to the "single sequence" representations, these are not necessarily the sequence of one protein, but rather the concatenated sequence of all the atoms or tokens in our structure (which could contain multiple separate molecules).</d-footnote>
+This section is the majority of the model, often referred to as the "trunk", as it is where most of the computation is done. We call it the representation learning section of the model, as the goal is to learn improved representations of our token-level "single" (**<span style="color: #F5ACFB;">s</span>**) and "pair" (**<span style="color: #7CC9F4;">z</span>**) tensors initialized above. <d-footnote>
+Recall that we refer to the "single" sequence representations, these are not necessarily the sequence of one protein, but rather the concatenated sequence of all the atoms or tokens in our structure (which could contain multiple separate molecules).</d-footnote>
 
 This section contains:
 
-1. **Template module** updating **<span style="color: #7CC9F4;">z</span>** using the retrieved structure templates
-2. **MSA module** updating **<span style="color: #7CC9F4;">z</span>** by first updating the MSA representation, then adding it to **<span style="color: #7CC9F4;">z</span>**. In this section we spend significant time on two operations:
-   - The Outer Product Mean (enables communication between pair and single tensors)
-   - Pair-weight averaging (a simplified version of attention with pair-bias)
-3. **Pairformer** updates **<span style="color: #F5ACFB;">s</span>** and **<span style="color: #7CC9F4;">z</span>** with geometry-inspired attention. This section mostly describes the triangle operations (used extensively throughout both AF2 and AF3)
+1. **Template module** updates **<span style="color: #7CC9F4;">z</span>** using the structure templates **<span style="color: #2EAF88;">t</span>**
+2. **MSA module** first updates the MSA **<span style="color: #FDC38D;">m</span>**, then adds it to the token-level pair representation **<span style="color: #7CC9F4;">z</span>**. In this section we spend significant time on two operations:
+   - [The Outer Product Mean](#outer-product-mean) enables **<span style="color: #FDC38D;">m</span>** to influence **<span style="color: #7CC9F4;">z</span>**
+   - [MSA Row-wise Gated Self-Attention Using Only Pair Bias](#row-wise-gated-self-attention-using-only-pair-bias) updates **<span style="color: #FDC38D;">m</span>** based on **<span style="color: #7CC9F4;">z</span>** and is a simplified version of attention with pair-bias (intended for MSAs)
+3. **Pairformer** updates **<span style="color: #F5ACFB;">s</span>** and **<span style="color: #7CC9F4;">z</span>** with geometry-inspired (triangle) attention. This section mostly describes the triangle operations (used extensively throughout both AF2 and AF3).
+  - [Why look at triangles?](#why-look-at-triangles) explains some intuition for the triangle operations
+  - [Triangle Updates](#triangle-updates) and [Triangle Attention](#triangle-attention) both update **<span style="color: #7CC9F4;">z</span>** using methods similar to self-attention, but inspired by the triangle inequality
+  - [Single Attention With Pair Bias](#single-attention-with-pair-bias) updates **<span style="color: #F5ACFB;">s</span>** based on **<span style="color: #7CC9F4;">z</span>** and is the token-level equivalent of attention with pair-bias (intended for single sequences)
 
 Each individual block is repeated multiple times, and then the output of the whole section is fed back into itself again as input and the process is repeated (this is called recycling).
 
@@ -315,12 +330,12 @@ The last step of the MSA module is to update the pair representation through a s
 {% include figure.liquid path="assets/img/af3_post/summaries/pairformer.png" class="img-fluid rounded z-depth-1" zoomable=true %} <div class="caption">See where this fits into the full architecture</div>
 </div>
 <div class="l-body">
-  {% include figure.liquid path="assets/img/af3_post/pairformer_module.png" class="img-fluid rounded z-depth-1" zoomable=true %} <p>Diagram from AF3 suppl.</p>
+  {% include figure.liquid path="assets/img/af3_post/pairformer_module.png" class="img-fluid rounded z-depth-1" zoomable=true %} <p>Diagram from AF3 supplement</p>
 </div>
 
 Having updated our pair representation based on the templates and MSA Module, we now ignore them for the rest of the model. Instead, only the updated pair representation (**<span style="color: #7CC9F4;">z</span>**) and single representation (**<span style="color: #F5ACFB;">s</span>**) enter the Pairformer and are used to update each other. As the transition blocks have already been described, this section focuses on the Triangle Updates and Triangle Attention, then briefly explains how the Single Attention with Pair Bias differs from the variant described earlier. These triangle-based layers were first introduced in AF2 are one of the pieces that not only remained in AF3, but now are even more present in the architecture, so they get quite a bit of attention.
 
-### Why are we looking at triangles?
+### Why look at triangles?
 
 The guiding principle here is the idea of the triangle inequality: "the sum of any two sides of a triangle is greater than or equal to the third side". Recall that each **<span style="color: #7CC9F4;">z<sub>i,j</sub></span>** in the pair tensor encodes the relationship between positions i and j in the sequence. While it does not literally encode the physical distances between pairs of tokens, let's think about it for a moment as if it did. If we imagine that each **<span style="color: #7CC9F4;">z<sub>i,j</sub></span>** is the distance between two amino acids and we know **<span style="color: #7CC9F4;">z<sub>i,j</sub></span>**=1 and  **<span style="color: #7CC9F4;">z<sub>j,k</sub></span>**=1. By the triangle inequality **<span style="color: #7CC9F4;">z<sub>i,k</sub></span>** cannot be larger than $$\sqrt{2}$$. Knowing two of the distances gives us a strong belief about what the third distance must be. The goal of triangle updates and triangle attention are to try to encode these geometric constraints into the model.
 
@@ -418,12 +433,12 @@ In each de-noising diffusion step, we condition our prediction on multiple repre
 
 The AF3 paper breaks down its diffusion process into 4 steps that involve moving from tokens to atoms, back to tokens, and back to atoms:
 
-1. Prepare token-level conditioning tensors
-2. Prepare atom-level conditioning tensors, update them using the Atom Transformer, and aggregate them back to token-level
-3. Apply attention at the token-level, and project back to atoms
-4. Apply attention at the atom-level to predict atom-level noise updates
+1. [**Prepare token-level conditioning tensors**](#1-prepare-token-level-conditioning-tensors)
+2. [**Prepare atom-level conditioning tensors, update them using the Atom Transformer, and aggregate them back to token-level**](#2-prepare-atom-level-tensors-apply-atom-level-attention-and-aggregate-back-to-token-level)
+3. [**Apply attention at the token-level, and project back to atoms**](#3-apply-attention-at-the-token-level)
+4. [**Apply attention at the atom-level to predict atom-level noise updates**](#4-apply-attention-at-the-atom-level-to-predict-atom-level-noise-updates)
 
-**1. Prepare token-level conditioning tensors**
+### 1. Prepare token-level conditioning tensors
 
 <div class="l-body">
   <div class="row">
@@ -439,7 +454,7 @@ To initialize our token-level conditioning representation, we concatenate **<spa
 
 Similarly, for our token-level single representation, we concatenate the very first representation of the input created at the start of the model (**<span style="color: #F5ACFB;">s<sup>inputs</sup></span>**) and our current representation (**<span style="color: #F5ACFB;">s<sup>trunk</sup></span>**), then project it back down to its original size. We then create a Fourier embedding based on the current diffusion time step<d-footnote>More specifically, the amount of noise associated with this timestep in the Noise Schedule</d-footnote>, add that to our single representation, and pass that combination through several Transition blocks. By including the diffusion time step in the conditioning input here, it ensures the model is aware of the timestep in the diffusion process when making de-noising predictions, and so predicts the right scale of noise to remove for this timestep.
 
-**2. Prepare atom-level tensors, apply atom-level attention, and aggregate back to token-level**
+### 2. Prepare atom-level tensors, apply atom-level attention, and aggregate back to token-level
 
 At this point, our conditioning vectors are storing information at a per-token level, but we want to also run attention at the atom-level. To address this, we take our initial atom-level representations of the input created in the Embedding section (**<span style="color: #A056A7;">c</span>** and **<span style="color: #087CBE;">p</span>**), and update them based on the current token-level representations, to create atom-level conditioning tensors.
 
@@ -464,14 +479,14 @@ At the end of this step, we return
 * **<span style="color: #A056A7;">c</span>**: atom representation for conditioning based on the trunk
 * **<span style="color: #087CBE;">p</span>**: our updated atom-pair representation for conditioning
 
-**3. Apply attention at the token-level**
+### 3. Apply attention at the token-level
 
 <div class="l-body">
   {% include figure.liquid path="assets/img/af3_post/diffusion_transformer.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 The goal of this step is to apply attention to update our token-level representation of the atom coordinates and sequence information, <span style="color: #F5ACFB;">a</span>. This step uses the Diffusion Transformer visualized during input preparation, which mirrors the Atom Transformer but for tokens.
 
-**4. Apply attention at the atom-level to predict atom-level noise updates**
+### 4. Apply attention at the atom-level to predict atom-level noise updates
 
 Now, we return to atom space. We use our updated **<span style="color: #F5ACFB;">a</span>** (token-level representations based on current "center atom" locations) to update **<span style="color: #A056A7;">q</span>** (atom-level representation of all atoms based on current location) using the Atom Transformer. As was done in step 3, we broadcast our tokens representation to match the number of atoms we started with (selectively duplicating the tokens that represent multiple atoms), and run the Atom Transformer. Most importantly, one last linear layer maps this atom-level representation **<span style="color: #A056A7;">q</span>** back to R<sup>3</sup>.
 This is the key step: we've used all these conditioning representations to generate coordinate updates **<span style="color: #F4DD65;">r<sup>update</sup></span>** for all atoms. Now, because we generated these in the "dimensionless" space <span style="color: #F4DD65;">r<sub>l</sub></span>, we carefully re-scale<d-footnote>This careful scaling involves both the variance of our data, and the noise schedule based on our current timestep, so that our updates are smaller and smaller as we get deeper into the de-noising process.</d-footnote> the updates from **<span style="color: #F4DD65;">r<sup>update</sup></span>** to their form with non-unit variance, **<span style="color: #F4DD65;">x<sup>update</sup></span>**, and apply the updates to **<span style="color: #F4DD65;">x<sub>l</sub></span>**.
@@ -561,7 +576,7 @@ While no part of the model has an explicit restriction on the length of the inpu
 While a model trained on random crops of 384 can be applied to longer sequences, to improve the model's ability to handle these sequences, it is iteratively fine-tuned on larger sequence lengths. The mix of datasets and other training details is also varied in each training stage as is shown in the table below.
 
 <div class="l-body">
-  {% include figure.liquid path="assets/img/af3_post/training_stages.png" class="img-fluid rounded z-depth-1" zoomable=true %} <div class="caption">(Table from AF3 paper)</div>
+  {% include figure.liquid path="assets/img/af3_post/training_stages.png" class="img-fluid rounded z-depth-1" zoomable=true %} <div class="caption">(Table from AF3 supplement)</div>
 </div>
 ### Clashing
 The authors note that AF3's loss does not include a clash penalty for overlapping atoms. While switching to a diffusion-based structure module means the model could in theory predict two atoms to be in the same location, this seems to be minimal after training. That said, AF3 does employ a clashing penalty when ranking generated structures.
