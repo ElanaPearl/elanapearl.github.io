@@ -115,7 +115,7 @@ Similarly, if any of these proteins have known structures, those are also likely
 First, a genetic search is done searching for any protein or RNA chains that resemble any input protein or RNA chains. This does not involve any training and relies upon existing Hidden Markov Model (HMM) based methods<d-footnote>Specifically, they use jackhmmer, HHBlits, and nhmmer</d-footnote> to scan multiple protein databases and RNA databases for relevant hits. Then these sequences are aligned to each other to construct an MSA with N<sub>MSA</sub> sequences. As the computational complexity of the model scales with N<sub>MSA</sub> they limit this to N<sub>MSA</sub> < 2<sup>14</sup>. Typically, MSAs are constructed from individual protein chains but, as described in <a href="https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf">AF-multimer</a>, instead of just concatenating the separate MSAs together into a block diagonal matrix, certain chains from the same species can be 'paired' as described <a href="https://www.biorxiv.org/content/10.1101/240754v3.full.pdf">here</a>. This way, the MSA does not have to be as large and sparse, and evolutionary information can be learned about relationships between chains.
 
 <div class="l-body">
-  {% include figure.liquid path="assets/img/af3_post/multi_chain_msa.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+  {% include figure.liquid path="assets/img/af3_post/multi_chain_MSA.png" class="img-fluid rounded z-depth-1" zoomable=true %}
 </div>
 
 Then, for each protein chain, they use another HMM-based method (hmmsearch) to find sequences in the Protein Data Bank (PDB) that resemble the constructed MSA. The highest quality structures are selected and up to 4 of these are sampled to be included as "templates".
@@ -126,7 +126,7 @@ The only new part of these retrieval steps compared to AF-multimer is the fact t
 
 **How do we represent these templates?**
 
-From our template search, we have a 3D structure for each of our templates and information about which tokens are in which chains. First, the euclidean distances between all pairs of tokens in a given template are calculated. For tokens associated with multiple atoms, a representative "center atom" is used to calculate distances. This would be the C<sub>ɑ</sub> atom for amino acids and C<sup>1</sup>' atom for standard nucleotides.
+From our template search, we have a 3D structure for each of our templates and information about which tokens are in which chains. First, the euclidean distances between all pairs of tokens in a given template are calculated. For tokens associated with multiple atoms, a representative <span style="color: #0094FF">"center atom"</span> is used to calculate distances. This would be the <span style="color: #0094FF">C<sub>ɑ</sub></span> atom for amino acids and <span style="color: #0094FF">C<sup>1</sup>'</span> atom for standard nucleotides.
 
 <div class="l-body">
   {% include figure.liquid path="assets/img/af3_post/center_atoms.png" class="img-fluid rounded z-depth-1" zoomable=true %} <div class="caption">Highlighting <span style="color: #0094FF">"center atoms"</span> in single-token building blocks</div>
@@ -397,11 +397,11 @@ Conditional Diffusion lets the model 'condition' these de-noising predictions on
 
 As a result, the final generation is not just a random example that resembles the training data distribution, but should specifically match the information represented by this conditioning vector.
 
-<div class="l-gutter">
-  {% include figure.liquid path="assets/img/af3_post/coordinates_for_diffusion.png" class="img-fluid rounded z-depth-1" zoomable=true %} Matrix with coordinates to get de-noised.
-</div>
 
 With AF3, the data we learn to de-noise is a matrix **<span style="color: #F4DD65;">x</span>** with the x,y,z coordinates of all the atoms in our sequences. During training, we add Gaussian noise to these coordinates until they are effectively fully random. Then at inference time, we start with random coordinates. At each time step, we first randomly rotate and translate our entire predicted complex. This data-augmentation teaches the model that any rotation and translation of our complex is equally valid, and replaces the much more complicated Invariant Point Attention used in AF2. <d-footnote>AF2 had developed a complicated architecture called Invariant Point Attention meant to enforce equivariance to translations and rotations. This led to a vigorous debate over the importance of IPA in AF2's success. In AF3, this is dropped in favor of a much simpler approach: applying random rotations and translations as data-augmentations to help the model learn such equivariances naturally. So here we simply randomly rotate all atoms' coordinates around the center of our current generation (the mean over all atoms' coordinates), and randomly sample a translation in each dimension (x, y, and z) from a N(0,1) Gaussian. It appears from the algorithm that the translation is universal, that is the same translation is applied to every atom in our current generation. This type of data augmentation was popularize with CNNs but in the past few years, equivariant architectures like IPA have been considered an more efficient and elegant approach to solve the same problem. Thus, when AF3 replaced equivariant attention with data-augmentation, it sparked a lot of internet discussions.</d-footnote> We then add a small amount of noise to the coordinates to encourage more heterogeneous generations.<d-footnote>It benefits us for the model to generate several slightly different variations. At inference time, we can score each using our confidence head, and return only the generation with the highest score.</d-footnote> Finally, we predict a de-noising step using the Diffusion Module. We cover this module in more detail below:
+<div class="l-gutter">
+  {% include figure.liquid path="assets/img/af3_post/coordinates_for_diffusion.png" class="img-fluid rounded z-depth-1" zoomable=true %} Data (coordinates) to get de-noised
+</div>
 
 ## Diffusion Module
 <div class="l-gutter">
