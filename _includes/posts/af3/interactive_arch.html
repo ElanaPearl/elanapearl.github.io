@@ -2,23 +2,26 @@
   <div class="image-container">
     {% assign image_path = "assets/img/af3_post/full_arch_for_labeling.png" %}
     <img src="{{ image_path | relative_url }}" alt="Full Architecture" class="img-fluid rounded z-depth-1" usemap="#image-map">
-    {% for i in (1..9) %}
-      <div class="hover-overlay" id="overlay-{{ i }}"></div>
+    {% for i in (1..14) %}
+    <div class="hover-overlay" id="overlay-{{ i }}"></div>
     {% endfor %}
   </div>
-
-    <map name="image-map">
-        <area shape="rect" alt="Tokenization" title="Tokenization" coords="0.76,51.00,7.84,72.93" href="#tokenization" data-target="overlay-1">
-        <area shape="rect" alt="Retrieval" title="Retrieval" coords="7.99,1.63,20.14,41.48" href="#retrieval-create-msa-and-templates" data-target="overlay-2">
-        <area shape="rect" alt="Create atom-level representations" title="Create atom-level representations" coords="8.39,41.85,21.91,69.80" href="#create-atom-level-representations" data-target="overlay-3">
-        <area shape="rect" alt="Input Embedding" title="Input Embedding" coords="21.84,21.43,31.92,71.05" href="#update-atom-level-representations-atom-transformer" data-target="overlay-4">
-        <area shape="rect" alt="Template module" title="Template module" coords="34.38,33.96,40.74,56.64" href="#template-module" data-target="overlay-5">
-        <area shape="rect" alt="MSA module" title="MSA module" coords="41.97,33.96,48.23,56.27" href="#msa-module" data-target="overlay-6">
-        <area shape="rect" alt="Pairformer" title="Pairformer" coords="49.39,33.96,63.63,69.80" href="#pairformer-module" data-target="overlay-7">
-        <area shape="rect" alt="Structure module" title="Structure module" coords="75.20,41.85,85.76,70.18" href="#3-structure-prediction" data-target="overlay-8">
-        <area shape="rect" alt="Confidence and Loss" title="Confidence and loss" coords="91.83,21.05,99.71,48.37" href="#4-loss-function-and-other-training-details" data-target="overlay-9">
-    </map>
-
+  <map name="image-map">
+      <area shape="rect" alt="Tokenization" title="Tokenization" coords="0.58,50.38,8.35,74.06" href="#tokenization" data-target="overlay-1">
+      <area shape="rect" alt="Retrieval" title="Retrieval" coords="8.35,3.26,22.16,40.98" href="#retrieval-create-msa-and-templates" data-target="overlay-2">
+      <area shape="rect" alt="Create atom-level representations" title="Create atom-level representations" coords="8.35,41.48,22.16,68.92" href="#create-atom-level-representations" data-target="overlay-3">
+      <area shape="rect" alt="Atom Transformer" title="Atom Transformer" coords="22.23,23.43,28.16,69.80" href="#update-atom-level-representations-atom-transformer" data-target="overlay-4">
+      <area shape="rect" alt="Atom-Level to Token-Level" title="Atom-Level to Token-Level" coords="28.16,40.23,31.89,69.80" href="#aggregate-atom-level--token-level" data-target="overlay-5">
+      <area shape="rect" alt="Template module" title="Template module" coords="34.56,34.59,40.56,56.02" href="#template-module" data-target="overlay-6">
+      <area shape="rect" alt="MSA module" title="MSA module" coords="42.15,34.21,48.16,56.02" href="#msa-module" data-target="overlay-7">
+      <area shape="rect" alt="Pairformer" title="Pairformer" coords="49.67,34.21,63.52,69.80" href="#pairformer-module" data-target="overlay-8">
+      <area shape="rect" alt="Diffusion module" title="Diffusion module" coords="68.37,41.48,90.20,70.18" href="#diffusion-module" data-target="overlay-9">
+      <area shape="rect" alt="Confidence and Loss" title="Confidence and loss" coords="90.96,20.05,99.71,47.37" href="#4-loss-function-and-other-training-details" data-target="overlay-10">
+      <area shape="rect" alt="Other training details" title="Other training details" coords="90.96,47.37,99.71,66.17" href="#other-training-details" data-target="overlay-11">
+      <area shape="rect" alt="Input preparation" title="Input preparation" coords="8.35,87.84,23.46,97.74" href="#1-input-preparation" data-target="overlay-12">
+      <area shape="rect" alt="Representation learning" title="Representation learning" coords="38.76,87.84,58.97,97.49" href="#2-representation-learning" data-target="overlay-13">
+      <area shape="rect" alt="Structure prediction" title="Structure prediction" coords="71.69,88.22,89.37,96.74" href="#3-structure-prediction" data-target="overlay-14">
+  </map>
 </figure>
 
 <style>
