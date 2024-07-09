@@ -1,0 +1,87 @@
+<figure class="image-figure">
+  <div class="image-container">
+    {% assign image_path = "assets/img/af3_post/full_arch_for_labeling.png" %}
+    <img src="{{ image_path | relative_url }}" alt="Full Architecture" class="img-fluid rounded z-depth-1" usemap="#image-map">
+    {% for i in (1..9) %}
+      <div class="hover-overlay" id="overlay-{{ i }}"></div>
+    {% endfor %}
+  </div>
+
+    <map name="image-map">
+        <area shape="rect" alt="Tokenization" title="Tokenization" coords="0.76,51.00,7.84,72.93" href="#tokenization" data-target="overlay-1">
+        <area shape="rect" alt="Retrieval" title="Retrieval" coords="7.99,1.63,20.14,41.48" href="#retrieval-create-msa-and-templates" data-target="overlay-2">
+        <area shape="rect" alt="Create atom-level representations" title="Create atom-level representations" coords="8.39,41.85,21.91,69.80" href="#create-atom-level-representations" data-target="overlay-3">
+        <area shape="rect" alt="Input Embedding" title="Input Embedding" coords="21.84,21.43,31.92,71.05" href="#update-atom-level-representations-atom-transformer" data-target="overlay-4">
+        <area shape="rect" alt="Template module" title="Template module" coords="34.38,33.96,40.74,56.64" href="#template-module" data-target="overlay-5">
+        <area shape="rect" alt="MSA module" title="MSA module" coords="41.97,33.96,48.23,56.27" href="#msa-module" data-target="overlay-6">
+        <area shape="rect" alt="Pairformer" title="Pairformer" coords="49.39,33.96,63.63,69.80" href="#pairformer-module" data-target="overlay-7">
+        <area shape="rect" alt="Structure module" title="Structure module" coords="75.20,41.85,85.76,70.18" href="#3-structure-prediction" data-target="overlay-8">
+        <area shape="rect" alt="Confidence and Loss" title="Confidence and loss" coords="91.83,21.05,99.71,48.37" href="#4-loss-function-and-other-training-details" data-target="overlay-9">
+    </map>
+
+</figure>
+
+<style>
+  .image-figure {
+    margin-bottom: 1rem;
+  }
+  .image-container {
+    position: relative;
+    width: 100%;
+  }
+  .hover-overlay {
+    position: absolute;
+    background-color: rgba(136, 0, 255, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .figure-caption {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var img = document.querySelector('.image-container img');
+  var map = document.querySelector('map[name="image-map"]');
+  var areas = map.querySelectorAll('area');
+  var overlays = document.querySelectorAll('.hover-overlay');
+
+  function updateAreasAndOverlays() {
+    var width = img.width;
+    var height = img.height;
+
+    areas.forEach(function(area, index) {
+      var coords = area.getAttribute('coords').split(',');
+      var newCoords = coords.map(function(coord, i) {
+        return i % 2 === 0 ? Math.round(coord * width / 100) : Math.round(coord * height / 100);
+      });
+      area.coords = newCoords.join(',');
+
+      var overlay = overlays[index];
+      overlay.style.left = (newCoords[0] / width * 100) + '%';
+      overlay.style.top = (newCoords[1] / height * 100) + '%';
+      overlay.style.width = ((newCoords[2] - newCoords[0]) / width * 100) + '%';
+      overlay.style.height = ((newCoords[3] - newCoords[1]) / height * 100) + '%';
+    });
+  }
+
+  // Update areas and overlays initially and on window resize
+  updateAreasAndOverlays();
+  window.addEventListener('resize', updateAreasAndOverlays);
+
+  // Hover effects
+  areas.forEach(function(area) {
+    area.addEventListener('mouseover', function() {
+      var targetId = this.getAttribute('data-target');
+      document.getElementById(targetId).style.opacity = '1';
+    });
+    area.addEventListener('mouseout', function() {
+      var targetId = this.getAttribute('data-target');
+      document.getElementById(targetId).style.opacity = '0';
+    });
+  });
+});
+</script>
