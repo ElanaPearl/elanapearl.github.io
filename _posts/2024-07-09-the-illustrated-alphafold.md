@@ -4,7 +4,7 @@ title: The Illustrated AlphaFold
 description: A visual walkthrough of the AlphaFold3 architecture, with more details and diagrams than you were probably looking for.
 tags:
 giscus_comments: false
-date: 2024-07-09
+date: 2024-07-10
 featured: false
 thumbnail: assets/img/af3_post/af3_thumbnail.png
 authors:
@@ -19,6 +19,11 @@ authors:
 images:
   compare: true
   slider: true
+og_image: assets/img/af3_post/af3_thumbnail.png
+og_image_width: 2126
+og_image_height: 1478
+twitter_card: summary_large_image
+twitter_image: assets/img/af3_post/af3_thumbnail.png
 ---
 # Introduction
 ### Who should read this
