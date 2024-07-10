@@ -41,6 +41,7 @@ This is probably more exhaustive than most people are looking for, but if you wa
 We'll start by pointing out that goals of the model are a bit different than previous AlphaFold models: instead of just predicting the structure of individual protein sequences (AF2) or protein complexes (AF-multimeter), it predicts the structure of a protein, optionally complexed with other proteins, nucleic acids, or small molecules, all from sequence alone. So while previous AF models only had to represent sequences of standard amino acids, AF3 has to represent more complex input types, and thus there is a more complex featurization/tokenization scheme. Tokenization is described in its own section, but for now just know that when we say "token" it either represents a single amino acid (for proteins), nucleotide (for DNA/RNA), or an individual atom if that atom is not part of a standard amino acid/nucleotide.
 
 <div class="l-body">
+  <p style="text-align: center;"><b>Interactive Table of Contents</b></p>
   {% include posts/af3/interactive_arch.html %}
   <div class="caption">Full architecture. If you click on any part of the architecture, it will take you to that section of the post. If you resize the page, you might need to refresh to keep the interactive part working. (Diagram modified from AF3 paper)</div>
 </div>
