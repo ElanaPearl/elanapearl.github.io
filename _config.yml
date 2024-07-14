@@ -2,13 +2,13 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: blank # the website title (if blank, full name will be used instead)
+title: matmols # the website title (if blank, full name will be used instead)
 first_name: Elana
 middle_name: P.
 last_name: Simon
 email: elanasimon95@gmail.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-  PhD Student at Stanford University
+  (matrices & molecules) a collection of deep-dives into ML x bio
 footer_text: >
   Template by <a href="https://github.com/alshedivat/al-folio">al-folio</a>.
 keywords: jekyll, jekyll-theme, academic-website, portfolio-website # add your own keywords or leave empty
