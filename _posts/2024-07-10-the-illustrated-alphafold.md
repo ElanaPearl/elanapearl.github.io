@@ -504,7 +504,7 @@ With that, we've completed our tour through the main architecture of AlphaFold 3
 
 # 4. Loss Function and Other Training Details
 ## Loss function and confidence heads
-$$L_{\text{loss}} = L_{\text{distogram}}*\alpha_{\text{distogram}}+L_{\text{diffusion}}*\alpha_{\text{diffusion}}+L_{\text{confidence}}*\alpha_{\text{confidence}}$$
+L<sub>loss</sub> = L<sub>distogram</sub> * α<sub>distogram</sub>  +  L<sub>diffusion</sub> * α<sub>diffusion</sub>  +  L<sub>confidence</sub> * α<sub>confidence</sub>
 
 The loss is a weighted sum of 3 terms:
 
@@ -517,7 +517,8 @@ The output of our model is atom-level coordinates, which can easily be used to c
 
 ### L<sub>diffusion</sub>
 The diffusion loss itself is a weighted sum of three terms each computed over the atom positions, additionally scaled by the amount of noise<d-footnote>t<sup>^</sup>, the sampled noise level for the current time step, and σ<sub>data</sub>, the variance of the data which scales the amount of noise at each time step</d-footnote> added at the current time step:
-$$L_{\text{diffusion}} = (L_{\text{MSE}} + L_{\text{bond}} * \alpha_{\text{bond}}) * (\hat{t}^2 + \sigma_{\text{data}}^2)/(\hat{t}+\sigma_{\text{data}})^2 + L_{\text{smooth_lddt}}$$
+
+L<sub>diffusion</sub> = (L<sub>MSE</sub> + L<sub>bond</sub> * α<sub>bond</sub>) * (t̂² + σ<sub>data</sub>²)/(t̂+σ<sub>data</sub>)² + L<sub>smooth_lddt</sub>
 
 * **L<sub>MSE</sub>** is a version of the distogram loss we just discussed, but over all atoms rather just "center atoms" (and with DNA, RNA, and ligand atoms upweighted). Additionally, it looks at the mean squared error between positions, rather than binning them into a distogram.
 * **L<sub>bond</sub>** aims to ensure the accuracy of bond lengths for protein-ligand bonds by adding an additional MSE loss on the difference in predicted and ground-truth distograms for atom-pairs that are part of protein-ligand bonds.<d-footnote>There are various stages of training and α<sub>bond</sub> is set to 0 in the initial stages, so this term is only introduced later.</d-footnote>
@@ -531,7 +532,7 @@ $$L_{\text{diffusion}} = (L_{\text{MSE}} + L_{\text{bond}} * \alpha_{\text{bond}
 
 The goal of this loss is not to improve the accuracy of the structure, but rather to teach the model to predict its own accuracy. This loss is a weighted sum of 4 terms that each correspond to a method of evaluating the quality of a predicted structure:
 
-$$L_{\text{confience}} = L_{\text{plDDT}} + L_{\text{PDE}} + L_{\text{resolved}} + L_{\text{PAE}} * \alpha_{\text{PAE}}$$
+L<sub>confidence</sub> = L<sub>plDDT</sub> + L<sub>PDE</sub> + L<sub>resolved</sub> + L<sub>PAE</sub> * α<sub>PAE</sub>
 
 * **lDDT** Atom-level "local distance difference test", capturing the expected accuracy of an atom's predicted distances to nearby atoms.
 
