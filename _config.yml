@@ -2,7 +2,7 @@
 # Site settings
 # -----------------------------------------------------------------------------
 
-title: matmols # the website title (if blank, full name will be used instead)
+title: Elana Simon # the website title (if blank, full name will be used instead)
 first_name: Elana
 middle_name: P.
 last_name: Simon
@@ -46,7 +46,7 @@ rss_icon: true
 # -----------------------------------------------------------------------------
 
 navbar_fixed: true
-footer_fixed: true
+footer_fixed: false 
 search_enabled: true
 socials_in_search: true
 
