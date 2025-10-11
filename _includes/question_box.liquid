@@ -1,0 +1,65 @@
+{% comment %}
+Usage: 
+{% include question_box.liquid title="Remaining Question" emoji="❓" content="Your content here" %}
+
+Or with custom title and emoji:
+{% include question_box.liquid title="Key Insight" emoji="💡" content="Your content here" %}
+
+Or without title but with emoji:
+{% include question_box.liquid emoji="❗" content="Your content here" %}
+
+Or just basic box:
+{% include question_box.liquid content="Your content here" %}
+
+Common emojis: ❓ ❗ 💡 🔍 ⚠️ ✅ ❌ 🎯 🔧 🐛
+{% endcomment %}
+
+<div style="
+  background: var(--global-card-bg-color);
+  border: 1px solid var(--global-divider-color);
+  border-left: 4px solid var(--global-theme-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  transition: box-shadow 0.3s ease;
+">
+  {% if include.title %}
+  <div style="
+    position: absolute;
+    top: -12px;
+    left: 1rem;
+    background: var(--global-theme-color);
+    color: var(--global-hover-text-color);
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  ">{{ include.title }}</div>
+  {% endif %}
+  {% if include.emoji %}
+  <div style="
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-size: 1.6rem;
+    opacity: 0.75;
+    transform: rotate(8deg);
+    pointer-events: none;
+  ">{{ include.emoji }}</div>
+  {% endif %}
+  <div style="
+    {% if include.title %}margin-top: 0.5rem;{% endif %}
+    {% if include.emoji %}padding-right: 2.5rem;{% endif %}
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--global-text-color);
+  ">
+    {{ include.content }}
+  </div>
+</div>
