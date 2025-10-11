@@ -3043,9 +3043,10 @@ d-citation-list .references .title {
       }
 
       function highlightAutomaticallyCallback() {
-        if (!_.manual) {
-          _.highlightAll();
-        }
+        // Disabled to avoid conflict with Rouge syntax highlighting
+        // if (!_.manual) {
+        //   _.highlightAll();
+        // }
       }
 
       if (!_.manual) {
@@ -3481,10 +3482,11 @@ d-citation-list .references .title {
         });
       };
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // execute inside handler, for dropping Event as argument
-        self.Prism.fileHighlight();
-      });
+      // Disabled to avoid conflict with Rouge syntax highlighting
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   // execute inside handler, for dropping Event as argument
+      //   self.Prism.fileHighlight();
+      // });
     })();
   });
 
