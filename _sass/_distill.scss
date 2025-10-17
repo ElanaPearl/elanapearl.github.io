@@ -80,17 +80,17 @@ d-article {
     grid-row: auto / span 4;
     justify-self: end;
     margin-top: 0em;
-    padding-left: 2em;
-    padding-right: 3em;
+    padding-left: 1em;
+    padding-right: 1em;
     border-right: 1px solid var(--global-divider-color);
-    width: calc(max(70%, 300px));
+    width: calc(max(50%, 250px));
     margin-right: 0px;
     margin-top: 0em;
     display: grid;
     grid-template-columns:
-      minmax(8px, 1fr) [toc] auto
-      minmax(8px, 1fr) [toc-line] 1px
-      minmax(32px, 2fr);
+      minmax(4px, 1fr) [toc] auto
+      minmax(4px, 1fr) [toc-line] 1px
+      minmax(16px, 1fr);
 
     nav {
       grid-column: toc;
@@ -149,6 +149,74 @@ d-appendix {
     &:hover {
       color: var(--global-hover-color) !important;
     }
+  }
+}
+
+// Custom overrides for distill-wide layout only
+.post.distill-wide {
+  // Use full width with reasonable max-width
+  max-width: min(1200px, 95vw) !important;
+  margin: 0 auto !important;
+  
+  // Override Distill's grid layout completely
+  d-article {
+    display: block !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    grid-template-columns: 1fr !important;
+    grid-column: 1 / -1 !important;
+  }
+  
+  // Responsive container
+  .container {
+    max-width: min(1200px, 95vw) !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin: 0 auto !important;
+  }
+  
+  // Completely hide TOC
+  d-contents {
+    display: none !important;
+  }
+  
+  // Override any remaining grid constraints
+  d-title, d-byline, d-article, d-appendix {
+    grid-column: 1 / -1 !important;
+    max-width: none !important;
+  }
+  
+  // Ensure the main content area uses full width
+  .distill-wide {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// Responsive adjustments for distill-wide layout
+@media (max-width: 768px) {
+  .post.distill-wide {
+    max-width: 95vw !important;
+    
+    d-article {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+    
+    .container {
+      max-width: 95vw !important;
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .post.distill-wide {
+    max-width: 1200px !important;
   }
 }
 
