@@ -19,7 +19,7 @@ og_image: "/assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png"
 og_image_width: 1830
 og_image_height: 1328
 twitter_card: summary_large_image
-twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png"
+twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png?v=3"
 syntax_theme_light: jekyll-pygments-themes-one-light.css
 syntax_theme_dark: jekyll-pygments-themes-one-dark-pro.css
 ---
