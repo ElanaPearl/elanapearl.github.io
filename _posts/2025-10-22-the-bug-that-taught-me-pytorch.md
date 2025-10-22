@@ -15,11 +15,11 @@ authors:
 images:
   compare: true
   slider: true
-og_image: "https://elanapearl.github.io/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
+og_image: "/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
 og_image_width: 2126
 og_image_height: 1478
 twitter_card: summary_large_image
-twitter_image: "https://elanapearl.github.io/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
+twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
 syntax_theme_light: jekyll-pygments-themes-one-light.css
 syntax_theme_dark: jekyll-pygments-themes-one-dark-pro.css
 ---
