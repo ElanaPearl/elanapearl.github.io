@@ -33,7 +33,6 @@
 <!-- Code Syntax Highlighting -->
 {% assign light_theme = page.syntax_theme_light | default: 'jekyll-pygments-themes-github.css' %}
 <link
-  defer
   rel="stylesheet"
   href="{{ '/assets/css/' | append: light_theme | relative_url | bust_file_cache }}"
   media=""
@@ -74,7 +73,6 @@
 {% if site.enable_darkmode %}
   {% assign dark_theme = page.syntax_theme_dark | default: 'jekyll-pygments-themes-native.css' %}
   <link
-    defer
     rel="stylesheet"
     href="{{ '/assets/css/' | append: dark_theme | relative_url | bust_file_cache }}"
     media="none"
