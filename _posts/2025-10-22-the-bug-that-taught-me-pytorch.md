@@ -6,7 +6,7 @@ tags: []
 giscus_comments: false
 date: 2025-10-22
 featured: false 
-thumbnail: "assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
+thumbnail: "assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png"
 authors:
   - name: Elana Simon
     url: "https://www.elanapearl.github.io"
@@ -15,11 +15,11 @@ authors:
 images:
   compare: true
   slider: true
-og_image: "/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
-og_image_width: 4200
-og_image_height: 5344
+og_image: "/assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png"
+og_image_width: 2026
+og_image_height: 1308
 twitter_card: summary_large_image
-twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/placeholder_bug_mechanism.png"
+twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/thumbnail.png"
 syntax_theme_light: jekyll-pygments-themes-one-light.css
 syntax_theme_dark: jekyll-pygments-themes-one-dark-pro.css
 ---
