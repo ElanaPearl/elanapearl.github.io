@@ -1,0 +1,140 @@
+<style>
+.diff-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid #e0e0e0;
+    max-width: 100%;
+    margin: 20px 0;
+}
+.diff-line {
+    display: flex;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border-bottom: 1px solid #e8e8e8;
+}
+.diff-line:last-child {
+    border-bottom: none;
+}
+.line-number {
+    padding: 4px 12px;
+    background: #f0f0f0;
+    color: #999;
+    text-align: right;
+    user-select: none;
+    min-width: 50px;
+    border-right: 1px solid #e0e0e0;
+}
+.line-content {
+    padding: 4px 12px;
+    flex: 1;
+    white-space: pre;
+}
+.added {
+    background: #e6ffed;
+    color: #24292e;
+}
+.added .line-number {
+    background: #cdffd8;
+    color: #22863a;
+}
+.removed {
+    background: #ffeef0;
+    color: #24292e;
+}
+.removed .line-number {
+    background: #ffdce0;
+    color: #d73a49;
+}
+.unchanged {
+    background: white;
+}
+</style>
+
+<div class="diff-container">
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">Tensor output = output_;</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">bool needsCopyToOutput = false;</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content"> </div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">if (!output_.is_contiguous()) {</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">    output = at::empty(...);  // Create contiguous buffer WE manage</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">    needsCopyToOutput = true;</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">}</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content"> </div>
+    </div>
+    
+    <div class="diff-line unchanged">
+        <div class="line-number">1</div>
+        <div class="line-content">@autoreleasepool {</div>
+    </div>
+    
+    <div class="diff-line unchanged">
+        <div class="line-number">2</div>
+        <div class="line-content">    Placeholder outputPlaceholder = Placeholder(output);</div>
+    </div>
+    
+    <div class="diff-line unchanged">
+        <div class="line-number">3</div>
+        <div class="line-content">    runMPSGraph(...);</div>
+    </div>
+    
+    <div class="diff-line unchanged">
+        <div class="line-number">4</div>
+        <div class="line-content">}</div>
+    </div>
+    
+    <div class="diff-line removed">
+        <div class="line-number">-</div>
+        <div class="line-content">// No copy-back - results vanish when Placeholder dies</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content"> </div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">if (needsCopyToOutput) {</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">    output_.copy_(output);  // Copy results back</div>
+    </div>
+    
+    <div class="diff-line added">
+        <div class="line-number">+</div>
+        <div class="line-content">}</div>
+    </div>
+</div>
