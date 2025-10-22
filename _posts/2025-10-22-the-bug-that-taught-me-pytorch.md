@@ -19,7 +19,7 @@ og_image: "/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
 og_image_width: 4200
 og_image_height: 5344
 twitter_card: summary_large_image
-twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/iceberg_meme.png"
+twitter_image: "/assets/img/the_bug_that_taught_me_pytorch_post/placeholder_bug_mechanism.png"
 syntax_theme_light: jekyll-pygments-themes-one-light.css
 syntax_theme_dark: jekyll-pygments-themes-one-dark-pro.css
 ---
