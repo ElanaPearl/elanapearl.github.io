@@ -77,15 +77,13 @@ Training loss plateaued way too early. This felt like a standard hyperparameter 
 
 What had changed? Those runs were months old. I tried reproducing them exactly, but couldn't pin down the exact environment—the codebase had evolved through multiple projects, refactors, and dependency updates. Without a clean "before vs after," I had to debug forward.
 
-So I tried everything: varied learning rates, tested different schedules, simplified the loss function, tried different k values and hidden dimensions, adjusted auxiliary loss coefficients. Nothing made a difference.
-
-Meanwhile, my actual research sat on hold while I was stuck second-guessing everything: was my code broken? My data corrupted? And the creeping doubt- I've been doing ML for years, why can't I make a simple two-layer autoencoder train properly?
-
 The architecture itself is straightforward: a two-layer sparse autoencoder (encoder --> sparse hidden layer --> decoder). However, it has some training quirks the _could_ be potential culprits: the hidden layer uses TopK sparsity, where only the k largest activations remain (others are zeroed); the training process includes some manual gradient adjustments (gradient clipping for stability and modifications to decoder weight gradients); there's an auxiliary loss term to encourage feature activation.
 
 Even though I thought my initial hyperparameters were already well-tested, I tried everything: varied learning rates, tested different schedules, tried different k values and hidden dimensions, adjusted the auxiliary loss coefficients.
 
 Nothing made a difference.
+
+Meanwhile, my actual research sat on hold while I was stuck second-guessing everything: was my code broken? My data corrupted? And the creeping doubt- I've been doing ML for years, why can't I make a simple two-layer autoencoder train properly?
 
 The model was small enough that I was training on my MacBook (using the Apple Silicon GPU) and simple enough I could actually inspect every parameter. So after the standard checks turned up nothing, I started looking at the weights directly.
 
