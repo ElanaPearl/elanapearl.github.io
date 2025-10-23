@@ -31,8 +31,7 @@ This time, it wasn't. It was a niche PyTorch bug that forced me through layers o
 
 I had a surprisingly fun time with this bug hunt and wrote up the whole investigation step-by-step, explaining framework internals as they become necessary to crack the case. If you enjoy debugging mysteries or find that tracking down bugs teaches you more than docs ever could, this might resonate. 🕵️‍♀️
 
-_Debugging post-mortems sometimes make me worry I wouldn't have been smart enough to figure them out myself. So I structured this walkthrough to show the reasoning behind each step: why I tested that hypothesis, why that result pointed me in a specific direction. The goal was to make each decision feel like the natural next move, the kind of thing any ML engineer would try with enough curiosity and stubbornness. Background knowledge appears exactly when you need it to understand the next step- think of it as an excuse to learn (or re-learn) PyTorch internals through a real problem._
-
+Debugging post-mortems sometimes make me worry I wouldn't have been smart enough to figure them out myself. So I structured this walkthrough to show the reasoning behind each step: what clues suggested each move, why I tested that hypothesis, why certain results pointed where they did. While the investigation took time and persistence, it didn't require any particular expertise or wizardry— just observation and willingness to keep digging. I've included background knowledge exactly when you need it to understand the next step—think of it as an excuse to learn (or re-learn) PyTorch internals through a real problem.
 If you'd prefer to jump straight to reproducing the bug yourself, check out the [minimal reproduction script and walkthrough](https://github.com/ElanaPearl/pytorch-mps-noncontiguous-bug) on GitHub. Otherwise, join me on the investigation!
 
 
@@ -74,9 +73,11 @@ If you'd prefer to jump straight to reproducing the bug yourself, check out the 
 </div>
 
 
-Training loss plateaued way too early. This felt like a standard hyperparameter issue— but I'd trained this same architecture on similar data with similar hyperparameters countless times and hit much lower losses.
+Training loss plateaued way too early. This felt like a standard hyperparameter issue- but I'd trained this same architecture on similar data with similar hyperparameters countless times and hit much lower losses.
 
-Still, I tried everything: varied learning rates, tested different schedules, simplified the loss function. Nothing made a difference.
+What had changed? Those runs were months old. I tried reproducing them exactly, but couldn't pin down the exact environment—the codebase had evolved through multiple projects, refactors, and dependency updates. Without a clean "before vs after," I had to debug forward.
+
+So I tried everything: varied learning rates, tested different schedules, simplified the loss function, tried different k values and hidden dimensions, adjusted auxiliary loss coefficients. Nothing made a difference.
 
 Meanwhile, my actual research sat on hold while I was stuck second-guessing everything: was my code broken? My data corrupted? And the creeping doubt- I've been doing ML for years, why can't I make a simple two-layer autoencoder train properly?
 
@@ -109,12 +110,17 @@ The encoder gradients were there- and they were pretty big (as intended for my d
 
 ### Is It the Optimizer?
 
-Since the gradients exist but weights aren't updating, the optimizer must be doing something wrong. Testing with manual gradient descent:
+Since the gradients exist but weights aren't updating, the optimizer must be doing something wrong. Testing with a simpler optimizer, stochastic gradient descent (SGD):
 
 ```python
 # Manual SGD update
 with torch.no_grad():
     model.encoder.weight -= 0.001 * model.encoder.weight.grad
+# Encoder weights change! ✓
+
+# Torch SGD update
+sgd_optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
+sgd_optimizer.step()
 # Encoder weights change! ✓
 
 # But with Adam...
@@ -369,12 +375,14 @@ Nothing helped. Even when both tensors had similar gradient statistics, only the
 |----------------|-----------------|-----------------|-----------|
 | **Device**     | mps:0           | mps:0           | ✓         |
 | **Dtype**      | float32         | float32         | ✓         |
-| **Shape**      | [384, 1536]     | [1536, 384]     | ✓         |
+| **Shape**      | [1536, 384]     | [384, 1536]     | ❌        |
 | **Requires_grad** | True         | True            | ✓         |
-| **Stride**     | (1536, 1)       | (384, 1)        | ❌        |
+| **Stride**     | (1, 1536)       | (1536, 1)        | ❌        |
 | **Contiguous** | False           | True            | ❌        |
 
-Two differences! The encoder has a different stride pattern and is non-contiguous (these are related - more on that below). Maybe the MPS Adam bug only affects non-contiguous tensors? Worth a shot:
+Three differences! The encoder and decoder have different shapes (they're transposes of each other)<d-footnote>PyTorch's <code>nn.Linear</code> stores weights as [out_features, in_features], so the encoder (384→1536) has shape [1536, 384] and the decoder (1536→384) has shape [384, 1536].</d-footnote>, different stride patterns, and different contiguity. These properties are all related (more on that below).
+
+The shape difference itself can't cause different behavior (PyTorch operations handle any shape). But contiguity? That's a low-level memory detail that could be relevant. Maybe the MPS Adam bug only affects non-contiguous tensors? Worth a shot:
 
 ```python
 model.encoder.weight.data = model.encoder.weight.contiguous()
@@ -827,4 +835,4 @@ What started as a frustrating research roadblock became a surprisingly fun & edu
 
 If you made it this far, thanks for joining! Hope you had fun and/or learned something & happy debugging!
 
-Special thanks to [Nicholas Joseph](https://x.com/nickevanjoseph), [Ben Kuhn](https://www.benkuhn.net/), and [Alex Tamkin](https://www.alextamkin.com/) for giving feedback on this 💜
+Special thanks to [Nicholas Joseph](https://x.com/nickevanjoseph), [Ben Kuhn](https://www.benkuhn.net/), [Nelson Elhage](https://blog.nelhage.com/) and [Alex Tamkin](https://www.alextamkin.com/) for giving feedback on this 💜
