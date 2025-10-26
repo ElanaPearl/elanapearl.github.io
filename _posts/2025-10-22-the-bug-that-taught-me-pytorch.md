@@ -137,16 +137,16 @@ To understand what might be breaking, I need to understand what Adam actually do
 <summary><b>Understanding Adam's Algorithm (click to collapse if familiar)</b></summary>
 <div markdown="1">
 
-### Two Problems with Vanilla SGD
+### Problems with Vanilla SGD
 
-Standard gradient descent (SGD) updates all parameters the same way:
+SGD updates all parameters the same way:
 
 ```python
 # SGD: one learning rate for everything
 param = param - learning_rate * gradient
 ```
 
-This creates two fundamental problems:
+This has a few problems:<d-footnote>SGD has other problems too (hence all the optimizer research), but these are the ones Adam addresses.</d-footnote>
 
 1. **Different parameters need different learning rates.**
    Some parameters might consistently get gradients around 1000 while others get 0.01. With SGD's fixed learning rate, you're stuck: either you move too slowly on small gradients or you overshoot wildly on large ones.
@@ -448,7 +448,7 @@ _While I could just call `.contiguous()` on my encoder, declare victory, and get
 
 {% include question_box.liquid emoji="🔎" content="
 <!-- <code style='background: var(--global-code-bg-color); color: var(--global-theme-color); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em;'> -->
-Why does a non-contiguous encoder weight cause zero second moment and no parameter updates with Adam on MPS??" %}
+Why does a non-contiguous encoder weight cause a zero second moment and no parameter updates with Adam on MPS??" %}
 
 ## Identifying the Broken Operations
 
